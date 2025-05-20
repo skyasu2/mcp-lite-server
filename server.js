@@ -18,8 +18,17 @@ app.post('/query', (req, res) => {
     return res.status(400).json({ result: 'query/context 값이 필요합니다.' });
   }
 
-  // 예시 응답 (실제는 context 파일 읽기)
-  res.json({ result: `질문 "${query}"에 대한 응답입니다.` });
+  const filePath = `./context/${context}.txt`;
+  if (!fs.existsSync(filePath)) {
+    return res.status(404).json({ result: 'context 문서를 찾을 수 없습니다.' });
+  }
+
+  const content = fs.readFileSync(filePath, 'utf8');
+  // query에 포함된 단어와 매칭되는 줄 찾기
+  const lines = content.split('\n');
+  const matched = lines.find(line => query.split(' ').some(word => line.includes(word)));
+
+  res.json({ result: matched || '관련 내용을 찾지 못했습니다' });
 });
 
 app.listen(PORT, () => {
