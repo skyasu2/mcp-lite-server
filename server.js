@@ -5,7 +5,10 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// Netlify 도메인만 허용하도록 CORS 설정
+app.use(cors({
+  origin: 'https://openvibe3.netlify.app'
+}));
 app.use(bodyParser.json());
 
 app.post('/query', (req, res) => {
